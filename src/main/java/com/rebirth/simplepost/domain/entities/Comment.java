@@ -1,30 +1,29 @@
 package com.rebirth.simplepost.domain.entities;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Comment {
+@AttributeOverride(name = "id", column = @Column(name = "comment_id"))
+@EqualsAndHashCode(callSuper = true)
+public class Comment extends Auditor<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Long id;
-
+    @NotNull
+    @NonNull
     @Column(columnDefinition = "text")
-    @NonNull
+    @Length(min = 1, max = 300)
+    @NotEmpty
+    @NotBlank
     private String body;
-
-    @NonNull
-    @Column(name = "post_id")
-    private Long postId;
 
 }
