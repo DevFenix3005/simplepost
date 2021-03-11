@@ -1,6 +1,5 @@
 package com.rebirth.simplepost.domain.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
@@ -36,5 +35,8 @@ public class Auditor<ID extends Serializable> implements Serializable {
 
     @LastModifiedBy
     private String updateBy;
+
+    @Version
+    private Long version;
 
 }

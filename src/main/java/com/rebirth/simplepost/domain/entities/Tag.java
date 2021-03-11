@@ -1,12 +1,10 @@
 package com.rebirth.simplepost.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -14,24 +12,32 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tag_id"))
+@EqualsAndHashCode(callSuper = false)
 public class Tag extends Auditor<Long> {
 
     @NonNull
-    @NotNull
     @Column(length = 30, nullable = false, unique = true)
-    @NotEmpty
-    @NotBlank
     private String name;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "posts_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id"))
-    Set<Post> posts;
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> posts = new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(name, tag.name);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

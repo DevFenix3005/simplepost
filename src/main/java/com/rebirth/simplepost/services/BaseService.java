@@ -1,25 +1,26 @@
 package com.rebirth.simplepost.services;
 
 import com.rebirth.simplepost.domain.entities.Auditor;
+import com.rebirth.simplepost.services.dtos.BaseDto;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseService<T extends Auditor<ID>, ID extends Serializable> {
+public interface BaseService<
+        T extends Auditor<ID>,
+        DTO extends BaseDto,
+        ID extends Serializable> {
 
-    List<T> fetchAll();
+    List<DTO> fetchAll();
 
-    Optional<T> fetchById(ID id);
+    Optional<DTO> fetchById(ID id);
 
-    T create(T entity);
+    DTO create(DTO entity);
 
-    T update(ID id, T entity);
+    DTO update(ID id, DTO entity);
 
     void remove(ID id);
 
-    default void remove(T entity) {
-        remove(entity.getId());
-    }
 
 }

@@ -1,8 +1,11 @@
 package com.rebirth.simplepost.web.controllers;
 
-import com.rebirth.simplepost.domain.entities.Comment;
 import com.rebirth.simplepost.services.CommentService;
+import com.rebirth.simplepost.services.dtos.CommentDto;
+import com.rebirth.simplepost.web.errors.BadRequestAlertException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -10,31 +13,35 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/comment")
-public class CommentController extends BaseController<Comment, Long> {
+public class CommentController extends BaseController<CommentDto, Long> {
 
     private final CommentService commentService;
 
     public CommentController(CommentService commentService) {
-        super(Comment.class);
+        super(CommentDto.class);
         this.commentService = commentService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Comment>> getComment() {
+    public ResponseEntity<List<CommentDto>> getComment() {
         return ResponseEntity.ok(this.commentService.fetchAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Comment> getComments(@PathVariable("id") Long id) {
-        Comment comment = this.commentService.fetchById(id)
+    public ResponseEntity<CommentDto> getComments(@PathVariable("id") Long id) {
+        CommentDto comment = this.commentService.fetchById(id)
                 .orElseThrow(() -> this.resoruceNotFound(id));
         return ResponseEntity.ok(comment);
     }
 
-
     @PostMapping("/")
-    public ResponseEntity<Comment> postComment(@RequestBody Comment comment) {
-        Comment newComment = this.commentService.create(comment);
+    public ResponseEntity<CommentDto> postComment(@Validated @RequestBody CommentDto comment, Errors errors) {
+        this.errorHandler(errors);
+        if (comment.getId() != null) {
+            throw new BadRequestAlertException("El recurso tiene un id asignado", this.klass.getName(), "ASSIGNED_ID");
+        }
+
+        CommentDto newComment = this.commentService.create(comment);
         URI uriNewEntity = this.generateNewUri(newComment.getId());
         return ResponseEntity.created(uriNewEntity).body(newComment);
     }
