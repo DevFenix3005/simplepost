@@ -1,30 +1,31 @@
 package com.rebirth.simplepost.domain.entities;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+@Entity
+@Table(name = "tags")
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Entity
-@Table(name = "tags")
-public class Tag {
+@EqualsAndHashCode(callSuper = true)
+@AttributeOverride(name = "id", column = @Column(name = "tag_id"))
+public class Tag extends Auditor<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tag_id")
-    private Long id;
-
-    @Column(length = 30)
     @NonNull
+    @NotNull
+    @Column(length = 30, nullable = false, unique = true)
+    @NotEmpty
+    @NotBlank
     private String name;
 
-
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "posts_tags",
