@@ -13,9 +13,13 @@ allprojects {
     sourceCompatibility = '11'
     ext {
         //Database credentials connection
-        mainUrl = "jdbc:postgresql://192.168.99.100:15432/simplepostdb"
-        mainUsername = "haskell"
-        mainPassword = "haskell8080"
+        /* mainUrl = "jdbc:postgresql://192.168.99.100:15432/simplepostdb"
+         mainUsername = "haskell"
+         mainPassword = "haskell8080"
+ */
+        mainUrl = "jdbc:postgresql://ec2-54-211-77-238.compute-1.amazonaws.com:5432/dfpc3ifh4fqvlo"
+        mainUsername = "kjwnhjaiexgygm"
+        mainPassword = "03e94dce45b89ef7afce6206f95145217f11b975f788494664e899e51af74acc"
 
         // Dep Versions
         problemVersion = "0.25.0"
