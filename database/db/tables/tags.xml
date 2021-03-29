@@ -1,0 +1,24 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="fenix (generated)" id="1615839850067-1">
+        <createTable tableName="tags">
+            <column autoIncrement="true" name="tag_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="tags_pkey"/>
+            </column>
+            <column name="create_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="create_by" type="VARCHAR(255)"/>
+            <column name="update_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="update_by" type="VARCHAR(255)"/>
+            <column name="version" type="BIGINT"/>
+            <column name="name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="fenix (generated)" id="1615839850067-5">
+        <addUniqueConstraint columnNames="name" constraintName="uk_t48xdq560gs3gap9g7jg36kgc" tableName="tags"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+plugins {
+    id 'org.liquibase.gradle'
+    id 'java'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+
+    liquibaseRuntime "org.liquibase:liquibase-core:${rootProject.ext.liquibaseVersion}"
+    liquibaseRuntime "org.postgresql:postgresql:42.2.19"
+    liquibaseRuntime "javax.xml.bind:jaxb-api:2.3.1"
+    liquibaseRuntime "ch.qos.logback:logback-core:1.2.3"
+    liquibaseRuntime "ch.qos.logback:logback-classic:1.2.3"
+
+}
+
+liquibase {
+    activities {
+        main {
+            changeLogFile 'db/changelog.xml'
+            url project.ext.mainUrl
+            username project.ext.mainUsername
+            password project.ext.mainPassword
+        }
+    }
+    runList = "main"
+}

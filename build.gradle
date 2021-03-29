@@ -1,46 +1,53 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.3'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.liquibase.gradle' version '2.0.3' apply false
+    id 'nu.studer.jooq' version '5.2' apply false
+    id 'org.springframework.boot' version '2.4.3' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE' apply false
     id 'java'
 }
 
-group = 'com.rebirth'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+allprojects {
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+    group = 'com.rebirth'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+    ext {
+        //Database credentials connection
+        /* mainUrl = "jdbc:postgresql://192.168.99.100:15432/simplepostdb"
+         mainUsername = "haskell"
+         mainPassword = "haskell8080"
+ */
+        mainUrl = "jdbc:postgresql://ec2-54-211-77-238.compute-1.amazonaws.com:5432/dfpc3ifh4fqvlo"
+        mainUsername = "kjwnhjaiexgygm"
+        mainPassword = "03e94dce45b89ef7afce6206f95145217f11b975f788494664e899e51af74acc"
+
+        // Dep Versions
+        problemVersion = "0.25.0"
+        springdocVersion = "1.5.2"
+        dozerVersion = "6.4.0"
+        jOOQVersion = "3.14.8"
+        liquibaseVersion = "3.8.1"
+        hikariCPVersion = "4.0.3"
+
+        //jOOQ runner
+        runList = ["main"]
     }
+
+
 }
 
-repositories {
-    mavenCentral()
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+
+    test {
+        useJUnitPlatform()
+    }
+
 }
 
-ext {
-    problemVersion = "0.25.0"
-}
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation 'org.springdoc:springdoc-openapi-ui:1.5.2'
-    implementation "org.zalando:problem:${rootProject.ext.problemVersion}"
-    implementation "org.zalando:jackson-datatype-problem:${rootProject.ext.problemVersion}"
-    implementation "org.zalando:problem-violations:${rootProject.ext.problemVersion}"
-    implementation "org.zalando:problem-spring-web:${rootProject.ext.problemVersion}"
-    implementation 'com.github.dozermapper:dozer-core:6.4.0'
 
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.12.2'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.postgresql:postgresql'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-test {
-    useJUnitPlatform()
-}

@@ -1,0 +1,84 @@
+plugins {
+    id 'nu.studer.jooq'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-jooq"
+
+    compileOnly "org.projectlombok:lombok"
+    runtimeOnly "org.postgresql:postgresql"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation "com.zaxxer:HikariCP:${rootProject.ext.hikariCPVersion}"
+
+    implementation "com.google.guava:guava:30.1-jre"
+
+    implementation "org.springdoc:springdoc-openapi-ui:${rootProject.ext.springdocVersion}"
+
+    implementation "org.zalando:problem:${rootProject.ext.problemVersion}"
+    implementation "org.zalando:jackson-datatype-problem:${rootProject.ext.problemVersion}"
+    implementation "org.zalando:problem-violations:${rootProject.ext.problemVersion}"
+    implementation "org.zalando:problem-spring-web:${rootProject.ext.problemVersion}"
+
+    implementation "org.jooq:jooq:${rootProject.ext.jOOQVersion}"
+    implementation "org.jooq:jooq-meta:${rootProject.ext.jOOQVersion}"
+    implementation "org.jooq:jooq-codegen:${rootProject.ext.jOOQVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    jooqGenerator "org.postgresql:postgresql"
+    jooqGenerator project(':customejooq')
+}
+
+jooq {
+    version = '3.14.8'  // the default (can be omitted)
+    configurations {
+        main {  // name of the jOOQ configuration
+            generateSchemaSourceOnCompilation = true  // default (can be omitted)
+
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = project.ext.mainUrl
+                    user = project.ext.mainUsername
+                    password = project.ext.mainPassword
+                }
+                generator {
+                    name = 'org.jooq.codegen.JavaGenerator'
+                    strategy {
+                        name = 'com.rebirth.simplepost.customejooq.MyCustomeJooqNameGenerator'
+                    }
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        excludes = 'databasechangelog.*'
+                    }
+                    generate {
+                        daos = true
+                        deprecated = false
+                        records = true
+                        fluentSetters = true
+                        validationAnnotations = true
+                    }
+                    target {
+                        packageName = 'com.rebirth.simplepost.domain'
+                        directory = 'build/generated-src/jooq/main'  // default (can be omitted)
+                    }
+                }
+            }
+        }
+    }
+}
+
