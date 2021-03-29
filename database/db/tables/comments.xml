@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="fenix (generated)" id="1615839850067-3">
+        <createTable tableName="comments">
+            <column autoIncrement="true" name="comment_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="comments_pkey"/>
+            </column>
+            <column name="create_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="create_by" type="VARCHAR(255)"/>
+            <column name="update_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="update_by" type="VARCHAR(255)"/>
+            <column name="version" type="BIGINT"/>
+            <column name="body" type="TEXT"/>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="fenix (generated)" id="1615839850067-8">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="comments"
+                                 constraintName="fkh4c7lvsc298whoyd4w9ta25cr" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

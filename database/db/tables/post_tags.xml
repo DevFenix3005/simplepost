@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="fenix (generated)" id="1615839850067-2">
+        <createTable tableName="posts_tags">
+            <column name="post_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="posts_tags_pkey"/>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="posts_tags_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="fenix (generated)" id="1615839850067-6">
+        <addForeignKeyConstraint baseColumnNames="tag_id" baseTableName="posts_tags"
+                                 constraintName="fk4svsmj4juqu2l8yaw6whr1v4v" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="tag_id" referencedTableName="tags" validate="true"/>
+    </changeSet>
+    <changeSet author="fenix (generated)" id="1615839850067-7">
+        <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="posts_tags"
+                                 constraintName="fkcreclgob71ibo58gsm6l5wp6" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

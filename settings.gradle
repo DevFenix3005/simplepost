@@ -1,1 +1,5 @@
-rootProject.name = 'simplepost'
+rootProject.name = 'com.rebirth.simplepost'
+include 'customejooq'
+include 'app'
+include 'database'
+

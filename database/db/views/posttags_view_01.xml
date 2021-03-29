@@ -1,0 +1,52 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20210325_post_with_tags_v01" author="fenix3009">
+        <createView
+                encoding="UTF-8"
+                schemaName="public"
+                viewName="post_with_tags">
+            select p.post_id, p.title, p.body, array_agg(t."name")
+            from posts p inner join posts_tags pt on p.post_id = pt.post_id
+            inner join tags t on pt.tag_id = t.tag_id
+            group by 1,2,3
+        </createView>
+    </changeSet>
+
+    <changeSet id="20210325_post_with_tags_v02" author="fenix3009">
+        <renameColumn tableName="post_with_tags" oldColumnName="array_agg" newColumnName="tags"/>
+    </changeSet>
+
+    <changeSet id="20210326_post_with_tags_v01" author="fenix3009">
+        <dropView viewName="post_with_tags" schemaName="public"/>
+        <createView
+                replaceIfExists="true"
+                encoding="UTF-8"
+                schemaName="public"
+                viewName="post_with_tags">
+            select
+                p.post_id,
+                p.create_at,
+                p.create_by,
+                p.update_at,
+                p.update_by,
+                p."version",
+                p.body,
+                p.title, array_agg(t."name")
+            from posts p inner join posts_tags pt using(post_id)
+                         inner join tags t using(tag_id)
+            group by 1,2,3
+        </createView>
+    </changeSet>
+
+    <changeSet id="20210326_post_with_tags_v02" author="fenix3009">
+        <renameColumn tableName="post_with_tags" oldColumnName="array_agg" newColumnName="tags"/>
+    </changeSet>
+
+
+
+
+
+</databaseChangeLog>

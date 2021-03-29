@@ -1,0 +1,34 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="fenix (generated)" id="1615839850067-4">
+        <createTable tableName="posts">
+            <column autoIncrement="true" name="post_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="posts_pkey"/>
+            </column>
+            <column name="create_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="create_by" type="VARCHAR(255)"/>
+            <column name="update_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="update_by" type="VARCHAR(255)"/>
+            <column name="version" type="BIGINT"/>
+            <column name="body" type="TEXT"/>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20210315143951-1" author="fenix3009">
+        <modifyDataType tableName="posts" columnName="title" newDataType="VARCHAR(150)"/>
+    </changeSet>
+
+    <changeSet id="202103190322-1" author="fenix3009">
+        <modifyDataType tableName="posts" columnName="body" newDataType="TEXT(300)"/>
+    </changeSet>
+
+    <changeSet id="202103190325-2" author="fenix3009">
+        <modifyDataType tableName="posts" columnName="body" newDataType="VARCHAR(300)"/>
+    </changeSet>
+
+</databaseChangeLog>
