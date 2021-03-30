@@ -1,5 +1,6 @@
 package com.rebirth.simplepost.services.impl;
 
+import com.pusher.rest.Pusher;
 import com.rebirth.simplepost.components.FilterComponent;
 import com.rebirth.simplepost.domain.tables.Comment;
 import com.rebirth.simplepost.domain.tables.dtos.CommentDto;
@@ -7,6 +8,7 @@ import com.rebirth.simplepost.domain.tables.records.CommentsRecord;
 import com.rebirth.simplepost.domain.tables.repositories.CommentRepository;
 import com.rebirth.simplepost.services.AbstractService;
 import com.rebirth.simplepost.services.CommentService;
+import com.rebirth.simplepost.services.dtos.PusherMessage;
 import com.rebirth.simplepost.utils.filters.QryFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -23,10 +25,15 @@ import java.util.Map;
 public class CommentServiceImpl extends AbstractService<CommentsRecord, CommentDto, Long, CommentRepository> implements CommentService {
 
     private final DefaultDSLContext dslContext;
+    private final Pusher pusher;
 
-    public CommentServiceImpl(CommentRepository repository, FilterComponent filterComponent, DefaultDSLContext dslContext) {
+    public CommentServiceImpl(CommentRepository repository,
+                              FilterComponent filterComponent,
+                              DefaultDSLContext dslContext,
+                              Pusher pusher) {
         super("commentId", repository, filterComponent);
         this.dslContext = dslContext;
+        this.pusher = pusher;
     }
 
     @Override
@@ -63,4 +70,13 @@ public class CommentServiceImpl extends AbstractService<CommentsRecord, CommentD
         return this.repository.fetchRangeOfUpdateAt(after4Hours, now);
     }
 
+
+    @Override
+    public CommentDto create(CommentDto entity) {
+        PusherMessage<CommentDto> commentDtoPusherMessage = new PusherMessage<>();
+        commentDtoPusherMessage.setMensaje("Se a agregado un nuevo comentario");
+        commentDtoPusherMessage.setBody(entity);
+        pusher.trigger("my-channel", "my-event", commentDtoPusherMessage);
+        return super.create(entity);
+    }
 }
