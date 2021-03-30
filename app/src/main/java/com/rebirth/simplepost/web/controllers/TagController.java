@@ -24,8 +24,8 @@ public class TagController extends BaseController<TagDto, Long> {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<TagDto>> getTags() {
-        return ResponseEntity.ok(this.tagService.fetchAll());
+    public ResponseEntity<List<TagDto>> getTags(@RequestParam(name = "__f", required = false, defaultValue = "") String filter) {
+        return ResponseEntity.ok(this.tagService.fetchAll(filter));
     }
 
     @GetMapping("/{id}")
@@ -34,6 +34,7 @@ public class TagController extends BaseController<TagDto, Long> {
                 .orElseThrow(() -> this.resoruceNotFound(id));
         return ResponseEntity.ok(tag);
     }
+
 
     @GetMapping("/{id}/posts")
     public ResponseEntity<TagWithPosts> getPostsByTag(@PathVariable("id") Long id) {

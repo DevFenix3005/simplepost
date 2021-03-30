@@ -4,7 +4,7 @@ package com.rebirth.simplepost.web.controllers;
 import com.rebirth.simplepost.domain.tables.dtos.PostDto;
 import com.rebirth.simplepost.domain.tables.dtos.PostWithTagDto;
 import com.rebirth.simplepost.services.PostService;
-import com.rebirth.simplepost.services.dtos.PostWithComments;
+import com.rebirth.simplepost.services.dtos.MixPostTags;
 import com.rebirth.simplepost.services.dtos.PostWithTags;
 import com.rebirth.simplepost.web.errors.BadRequestAlertException;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +38,25 @@ public class PostController extends BaseController<PostDto, Long> {
         return ResponseEntity.ok(postFetch);
     }
 
-    @GetMapping("/{id}/comment")
-    public ResponseEntity<PostWithComments> getCommentsByPost(@PathVariable("id") Long id) {
-        PostWithComments comments = postService.fetchPostWithComments(id);
-        return ResponseEntity.ok(comments);
+    @GetMapping("/mix")
+    public ResponseEntity<List<MixPostTags>> getMixPost(@RequestParam(required = false, name = "__f", defaultValue = "") String filtro) {
+        List<MixPostTags> fetchPostMixing = this.postService.fetchPostMixing(filtro);
+        return ResponseEntity.ok(fetchPostMixing);
     }
+
+
+    @PostMapping("/mix")
+    public ResponseEntity<MixPostTags> postPost(@Validated @RequestBody MixPostTags post, Errors errors) {
+        this.errorHandler(errors);
+        PostDto postDto = post.getPost();
+        if (postDto.getPostId() != null) {
+            throw new BadRequestAlertException("El recurso tiene un id asignado", this.klass.getName(), "ASSIGNED_ID");
+        }
+        MixPostTags newPost = this.postService.createPostMixing(post);
+        URI uriNewEntity = this.generateNewUri(newPost.getPost().getPostId());
+        return ResponseEntity.created(uriNewEntity).body(newPost);
+    }
+
 
     @PostMapping("/")
     public ResponseEntity<PostWithTags> postPost(@Validated @RequestBody PostWithTags post, Errors errors) {
