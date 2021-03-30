@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +13,6 @@ public class PusherMessage<BODY> {
 
     private BODY body;
     private String mensaje;
-    private final Date now = new Date();
+    private final LocalDateTime now = LocalDateTime.now();
 
 }
