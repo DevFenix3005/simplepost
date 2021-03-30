@@ -73,10 +73,11 @@ public class CommentServiceImpl extends AbstractService<CommentsRecord, CommentD
 
     @Override
     public CommentDto create(CommentDto entity) {
+        CommentDto commentDto = super.create(entity);
         PusherMessage<CommentDto> commentDtoPusherMessage = new PusherMessage<>();
         commentDtoPusherMessage.setMensaje("Se a agregado un nuevo comentario");
-        commentDtoPusherMessage.setBody(entity);
-        pusher.trigger("my-channel", "my-event", commentDtoPusherMessage);
-        return super.create(entity);
+        commentDtoPusherMessage.setBody(commentDto);
+        pusher.trigger("my-channel", "new-comment-event", commentDtoPusherMessage);
+        return commentDto;
     }
 }

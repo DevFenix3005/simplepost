@@ -2,6 +2,8 @@ package com.rebirth.simplepost.services.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.pusher.rest.Pusher;
+import com.pusher.rest.data.Result;
 import com.rebirth.simplepost.components.FilterComponent;
 import com.rebirth.simplepost.domain.tables.Post;
 import com.rebirth.simplepost.domain.tables.PostWithTag;
@@ -19,6 +21,7 @@ import com.rebirth.simplepost.services.PostService;
 import com.rebirth.simplepost.services.dtos.MixPostTags;
 import com.rebirth.simplepost.services.dtos.PostWithComments;
 import com.rebirth.simplepost.services.dtos.PostWithTags;
+import com.rebirth.simplepost.services.dtos.PusherMessage;
 import com.rebirth.simplepost.utils.filters.QryFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -45,18 +48,21 @@ public class PostServiceImpl extends AbstractService<PostsRecord, PostDto, Long,
     private final TagRepository tagRepository;
     private final PostsTagRepository postsTagRepository;
     private final CommentRepository commentRepository;
+    private final Pusher pusher;
 
     public PostServiceImpl(PostRepository repository,
                            DefaultDSLContext dslContext,
                            TagRepository tagRepository,
                            PostsTagRepository postsTagRepository,
                            CommentRepository commentRepository,
-                           FilterComponent filterComponent) {
+                           FilterComponent filterComponent,
+                           Pusher pusher) {
         super("postId", repository, filterComponent);
         this.dslContext = dslContext;
         this.tagRepository = tagRepository;
         this.postsTagRepository = postsTagRepository;
         this.commentRepository = commentRepository;
+        this.pusher = pusher;
     }
 
     public List<PostWithTagDto> findAllPostWithTags(String filter) {
@@ -89,6 +95,7 @@ public class PostServiceImpl extends AbstractService<PostsRecord, PostDto, Long,
         PostDto postDto = postTags.getPost();
 
         this.repository.insert(postDto);
+        MixPostTags resultMixPostTags;
 
         List<TagDto> tags = postTags.getTags();
         if (tags != null) {
@@ -103,10 +110,15 @@ public class PostServiceImpl extends AbstractService<PostsRecord, PostDto, Long,
                 this.postsTagRepository.insert(new PostsTagDto(postDto.getPostId(), tagDto.getTagId()));
                 newsTags.add(tagDto);
             }
-            return new MixPostTags(postDto, newsTags);
+            resultMixPostTags = new MixPostTags(postDto, newsTags);
         } else {
-            return new MixPostTags(postDto, Collections.emptyList());
+            resultMixPostTags = new MixPostTags(postDto, Collections.emptyList());
         }
+        PusherMessage<MixPostTags> commentDtoPusherMessage = new PusherMessage<>();
+        commentDtoPusherMessage.setMensaje("Se a agregado un nuevo post");
+        commentDtoPusherMessage.setBody(resultMixPostTags);
+        pusher.trigger("my-channel", "new-post-event", commentDtoPusherMessage);
+        return resultMixPostTags;
     }
 
     @Override
